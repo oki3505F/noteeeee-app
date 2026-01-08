@@ -21,31 +21,36 @@ function run(cmd, args, cwd = projectRoot) {
     }
 }
 
-// 1. Fix Logo Resources
-console.log('Fixing Logo Resources...');
+// 1. Icon Overhaul logic
+console.log('Fixing Icons with Safe Zone Padding...');
 const resDir = path.join(projectRoot, 'android/app/src/main/res');
-const logoSrc = path.join(projectRoot, 'public/logo.png');
+// Transparent glyph (centered, 50% relative size)
+const fgGlyphSrc = '/home/oki/.gemini/antigravity/brain/31fbd8b1-e438-43ee-bc83-868d3c8dfa31/adaptive_foreground_glyph_1767877539522.png';
+// Solid legacy icon
+const solidIconSrc = path.join(projectRoot, 'public/logo.png');
 
-if (fs.existsSync(logoSrc)) {
+if (fs.existsSync(fgGlyphSrc)) {
     const folders = fs.readdirSync(resDir);
     folders.forEach(folder => {
         const folderPath = path.join(resDir, folder);
         if (!fs.statSync(folderPath).isDirectory()) return;
 
-        // Cleanup anydpi PNGs to stop Duplicate Resource errors
-        if (folder.includes('anydpi')) {
-            ['ic_launcher.png', 'ic_launcher_round.png'].forEach(f => {
-                const p = path.join(folderPath, f);
-                if (fs.existsSync(p)) fs.unlinkSync(p);
-            });
-        }
-
-        const targets = ['ic_launcher.png', 'ic_launcher_round.png', 'ic_launcher_foreground.png'];
-        targets.forEach(target => {
-            if (folder.includes('anydpi') && target.endsWith('.png')) return;
+        // Adaptive Foreground - Uses transparent glyph
+        const fgTargets = ['ic_launcher_foreground.png'];
+        fgTargets.forEach(target => {
             const targetPath = path.join(folderPath, target);
             if (folder.startsWith('mipmap-') || folder.startsWith('drawable-')) {
-                fs.copyFileSync(logoSrc, targetPath);
+                fs.copyFileSync(fgGlyphSrc, targetPath);
+            }
+        });
+
+        // Legacy icons - Uses solid logo
+        const legacyTargets = ['ic_launcher.png', 'ic_launcher_round.png'];
+        legacyTargets.forEach(target => {
+            if (folder.includes('anydpi')) return;
+            const targetPath = path.join(folderPath, target);
+            if (folder.startsWith('mipmap-') || folder.startsWith('drawable-')) {
+                fs.copyFileSync(solidIconSrc, targetPath);
             }
         });
     });

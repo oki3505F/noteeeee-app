@@ -15,11 +15,13 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import { AnimatePresence, motion, Transition } from "framer-motion";
-import theme from "./theme";
+import { darkTheme, lightTheme } from "./theme";
 import { useNotes, Note } from "./useNotes";
 import { NoteList } from "./components/NoteList";
 import { NoteView } from "./components/NoteView";
 import { SearchBar } from "./components/SearchBar";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 const pageVariants = {
   initial: { x: "100vw", opacity: 0 },
@@ -43,6 +45,10 @@ function App() {
   const [activeNote, setActiveNote] = useState<Note | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [themeMode, setThemeMode] = useState<"light" | "dark">(() => {
+    const saved = localStorage.getItem("themeMode");
+    return (saved as "light" | "dark") || "dark";
+  });
   const [notification, setNotification] = useState<{
     open: boolean;
     message: string;
@@ -142,6 +148,16 @@ function App() {
     setViewMode((prev) => (prev === "grid" ? "list" : "grid"));
   }, []);
 
+  const toggleTheme = useCallback(() => {
+    setThemeMode((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      localStorage.setItem("themeMode", next);
+      return next;
+    });
+  }, []);
+
+  const currentTheme = themeMode === "dark" ? darkTheme : lightTheme;
+
   const getAppBarTitle = () => {
     if (activeNote) {
       return activeNote.id !== "new" ? "Edit Note" : "New Note";
@@ -160,7 +176,7 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={currentTheme}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -227,9 +243,17 @@ function App() {
                 {!activeNote && (
                   <>
                     <IconButton
+                      onClick={toggleTheme}
+                      sx={{
+                        color: themeMode === "dark" ? "rgba(230, 225, 229, 0.7)" : "inherit",
+                      }}
+                    >
+                      {themeMode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
+                    </IconButton>
+                    <IconButton
                       onClick={toggleViewMode}
                       sx={{
-                        color: "rgba(230, 225, 229, 0.7)",
+                        color: themeMode === "dark" ? "rgba(230, 225, 229, 0.7)" : "inherit",
                       }}
                     >
                       {viewMode === "grid" ? (

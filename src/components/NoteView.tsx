@@ -227,7 +227,7 @@ const NoteViewComponent = ({
           </Stack>
 
           <AnimatePresence>
-            {(autoSaving || hasUnsavedChanges) && (
+            {autoSaving && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
@@ -235,27 +235,16 @@ const NoteViewComponent = ({
                 transition={{ duration: 0.2 }}
               >
                 <Box sx={{ mt: 1 }}>
-                  {autoSaving && (
-                    <LinearProgress
-                      sx={{
-                        height: 2,
-                        borderRadius: 1,
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        "& .MuiLinearProgress-bar": {
-                          backgroundColor: "#BB86FC",
-                        },
-                      }}
-                    />
-                  )}
-                  {hasUnsavedChanges && !autoSaving && (
-                    <Typography
-                      variant="caption"
-                      color="warning.main"
-                      sx={{ fontSize: "0.7rem" }}
-                    >
-                      • Unsaved changes (Ctrl+S to save)
-                    </Typography>
-                  )}
+                  <LinearProgress
+                    sx={{
+                      height: 2,
+                      borderRadius: 1,
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      "& .MuiLinearProgress-bar": {
+                        backgroundColor: "#BB86FC",
+                      },
+                    }}
+                  />
                 </Box>
               </motion.div>
             )}
@@ -471,7 +460,7 @@ const NoteViewComponent = ({
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </motion.div >
   );
 };
 

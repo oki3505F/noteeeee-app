@@ -13,6 +13,7 @@ import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import Divider from "@mui/material/Divider";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ArticleIcon from "@mui/icons-material/Article";
+import PushPinIcon from "@mui/icons-material/PushPin";
 import { motion, AnimatePresence } from "framer-motion";
 import { Note } from "../useNotes";
 import { ViewMode } from "../App";
@@ -25,6 +26,7 @@ interface NoteListProps {
   notes: Note[];
   onSelectNote: (note: Note) => void;
   onDeleteNote: (note: Note) => void;
+  onTogglePin: (note: Note) => void;
   viewMode: ViewMode;
   searchQuery: string;
 }
@@ -195,7 +197,8 @@ const GridView = ({
                   "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
                 backdropFilter: "blur(10px)",
                 border: "1px solid rgba(255, 255, 255, 0.1)",
-                overflow: "hidden", // Ensure cover image doesn't overflow
+                overflow: "hidden",
+                position: "relative",
                 "&:hover": {
                   boxShadow: "0 8px 32px rgba(187, 134, 252, 0.2)",
                   borderColor: "rgba(187, 134, 252, 0.3)",
@@ -203,6 +206,19 @@ const GridView = ({
                 transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
+              {note.pinned && (
+                <PushPinIcon
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    color: "#BB86FC",
+                    fontSize: 20,
+                    zIndex: 1,
+                    transform: "rotate(45deg)",
+                  }}
+                />
+              )}
               {note.images && note.images.length > 0 && (
                 <Box
                   sx={{
@@ -224,6 +240,7 @@ const GridView = ({
                     fontSize: { xs: "1rem", sm: "1.1rem" },
                     mb: 1,
                     color: "text.primary",
+                    pr: note.pinned ? 2 : 0,
                   }}
                 >
                   {highlightSearchTerm(
@@ -356,19 +373,30 @@ const ListView = ({
 
             <ListItemText
               primary={
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    fontWeight: 600,
-                    fontSize: { xs: "1rem", sm: "1.1rem" },
-                    mb: 0.5,
-                  }}
-                >
-                  {highlightSearchTerm(
-                    note.title || "Untitled Note",
-                    searchQuery,
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: { xs: "1rem", sm: "1.1rem" },
+                      mb: 0.5,
+                    }}
+                  >
+                    {highlightSearchTerm(
+                      note.title || "Untitled Note",
+                      searchQuery,
+                    )}
+                  </Typography>
+                  {note.pinned && (
+                    <PushPinIcon
+                      sx={{
+                        color: "#BB86FC",
+                        fontSize: 16,
+                        transform: "rotate(45deg)",
+                      }}
+                    />
                   )}
-                </Typography>
+                </Box>
               }
               secondary={
                 <Box>
@@ -437,6 +465,7 @@ const NoteListComponent = ({
   notes,
   onSelectNote,
   onDeleteNote,
+  onTogglePin,
   viewMode,
   searchQuery,
 }: NoteListProps) => {
@@ -455,8 +484,7 @@ const NoteListComponent = ({
           mouseY: event.clientY - 6,
           note,
         }
-        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
-        null,
+        : null,
     );
   };
 
@@ -480,15 +508,26 @@ const NoteListComponent = ({
     handleClose();
   };
 
+  const handlePinAction = () => {
+    if (contextMenu?.note) {
+      onTogglePin(contextMenu.note);
+    }
+    handleClose();
+  };
+
   if (notes.length === 0) {
     return <EmptyState searchQuery={searchQuery} />;
   }
 
-  // Sort notes by most recently edited
-  const sortedNotes = [...notes].sort(
-    (a, b) =>
-      new Date(b.lastEdited).getTime() - new Date(a.lastEdited).getTime(),
-  );
+  // Sort notes: Pinned first, then by date
+  const sortedNotes = [...notes].sort((a, b) => {
+    if (!!a.pinned === !!b.pinned) {
+      return (
+        new Date(b.lastEdited).getTime() - new Date(a.lastEdited).getTime()
+      );
+    }
+    return a.pinned ? -1 : 1;
+  });
 
   return (
     <motion.div
@@ -527,9 +566,23 @@ const NoteListComponent = ({
             backgroundColor: "#2d2d2d",
             color: "white",
             backgroundImage: "none",
-          }
+            minWidth: 150,
+          },
         }}
       >
+        <MenuItem onClick={handlePinAction}>
+          <ListItemIcon>
+            <PushPinIcon
+              fontSize="small"
+              sx={{
+                color: contextMenu?.note?.pinned ? "primary.main" : "white",
+              }}
+            />
+          </ListItemIcon>
+          <ListItemText>
+            {contextMenu?.note?.pinned ? "Unpin note" : "Pin note"}
+          </ListItemText>
+        </MenuItem>
         <MenuItem onClick={handleDelete} sx={{ color: "#ff5252" }}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" sx={{ color: "#ff5252" }} />

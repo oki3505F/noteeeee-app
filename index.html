@@ -1,192 +1,152 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-        />
 
-        <!-- Primary Meta Tags -->
-        <title>Noteeeee App - Beautiful Note Taking</title>
-        <meta name="title" content="Noteeeee App - Beautiful Note Taking" />
-        <meta
-            name="description"
-            content="A beautiful, modern note-taking app with exceptional mobile UX. Create, search, and organize your notes with style."
-        />
-        <meta
-            name="keywords"
-            content="notes, note-taking, mobile app, react, material-ui, PWA, productivity"
-        />
-        <meta name="author" content="oki3505F" />
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-        <!-- Theme Colors -->
-        <meta name="theme-color" content="#141218" />
-        <meta name="msapplication-TileColor" content="#D0BCFF" />
-        <meta name="msapplication-navbutton-color" content="#141218" />
-        <meta
-            name="apple-mobile-web-app-status-bar-style"
-            content="black-translucent"
-        />
+    <!-- Primary Meta Tags -->
+    <title>Noteeeee App - Beautiful Note Taking</title>
+    <meta name="title" content="Noteeeee App - Beautiful Note Taking" />
+    <meta name="description"
+        content="A beautiful, modern note-taking app with exceptional mobile UX. Create, search, and organize your notes with style." />
+    <meta name="keywords" content="notes, note-taking, mobile app, react, material-ui, PWA, productivity" />
+    <meta name="author" content="oki3505F" />
 
-        <!-- PWA Support -->
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-title" content="Noteeeee" />
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#141218" />
+    <meta name="msapplication-TileColor" content="#D0BCFF" />
+    <meta name="msapplication-navbutton-color" content="#141218" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-        <!-- Open Graph / Facebook -->
-        <meta property="og:type" content="website" />
-        <meta
-            property="og:url"
-            content="https://github.com/oki3505F/noteeeee-app"
-        />
-        <meta
-            property="og:title"
-            content="Noteeeee - Premium Note Taking"
-        />
-        <meta
-            property="og:description"
-            content="Experience note-taking evolved. Material Design 3 aesthetics, fluid animations, and uncompromising performance."
-        />
-        <meta property="og:image" content="/og-image.png" />
+    <!-- PWA Support -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Noteeeee" />
 
-        <!-- Twitter -->
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta
-            property="twitter:url"
-            content="https://github.com/oki3505F/noteeeee-app"
-        />
-        <meta
-            property="twitter:title"
-            content="Noteeeee - Premium Note Taking"
-        />
-        <meta
-            property="twitter:description"
-            content="Experience note-taking evolved. Material Design 3 aesthetics, fluid animations, and uncompromising performance."
-        />
-        <meta property="twitter:image" content="/og-image.png" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://github.com/oki3505F/noteeeee-app" />
+    <meta property="og:title" content="Noteeeee - Premium Note Taking" />
+    <meta property="og:description"
+        content="Experience note-taking evolved. Material Design 3 aesthetics, fluid animations, and uncompromising performance." />
+    <meta property="og:image" content="/og-image.png" />
 
-        <!-- Favicon -->
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/favicon-32x32.png"
-        />
-        <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/favicon-16x16.png"
-        />
-        <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/apple-touch-icon.png"
-        />
-        <link rel="manifest" href="/manifest.json" />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://github.com/oki3505F/noteeeee-app" />
+    <meta property="twitter:title" content="Noteeeee - Premium Note Taking" />
+    <meta property="twitter:description"
+        content="Experience note-taking evolved. Material Design 3 aesthetics, fluid animations, and uncompromising performance." />
+    <meta property="twitter:image" content="/og-image.png" />
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@300;400;500;600;700&display=swap"
-            rel="stylesheet"
-        />
+    <!-- Favicon -->
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="manifest" href="/manifest.json" />
 
-        <!-- Preload Critical Resources -->
-        <link rel="preload" href="/src/main.tsx" as="script" crossorigin />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
 
-        <!-- Prevent FOUC -->
-        <style>
-            html,
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/src/main.tsx" as="script" crossorigin />
+
+    <!-- Prevent FOUC -->
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #e6e1e5;
+            font-family:
+                "Roboto Flex",
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                sans-serif;
+            overflow-x: hidden;
+        }
+
+        #root {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Loading animation */
+        .loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000000;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(208, 188, 255, 0.3);
+            border-top: 4px solid #d0bcff;
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Hide loading once React app loads */
+        .app-loaded .loading-container {
+            display: none;
+        }
+
+        /* Safe area support for iOS */
+        @supports (padding: max(0px)) {
             body {
-                margin: 0;
-                padding: 0;
-                background-color: #000000;
-                color: #e6e1e5;
-                font-family:
-                    "Roboto Flex",
-                    -apple-system,
-                    BlinkMacSystemFont,
-                    "Segoe UI",
-                    Roboto,
-                    sans-serif;
-                overflow-x: hidden;
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
             }
+        }
+    </style>
+</head>
 
-            #root {
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+    </div>
 
-            /* Loading animation */
-            .loading-container {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-color: #000000;
-                z-index: 9999;
-            }
+    <!-- React App Root -->
+    <div id="root"></div>
 
-            .loading-spinner {
-                width: 48px;
-                height: 48px;
-                border: 4px solid rgba(208, 188, 255, 0.3);
-                border-top: 4px solid #d0bcff;
-                border-radius: 50%;
-                animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            }
+    <!-- Main App Script -->
+    <script type="module" src="/src/main.tsx"></script>
 
-            @keyframes spin {
-                0% {
-                    transform: rotate(0deg);
-                }
-                100% {
-                    transform: rotate(360deg);
-                }
-            }
+    <!-- Remove loading screen once app loads -->
+    <script>
+        window.addEventListener("load", () => {
+            setTimeout(() => {
+                document.body.classList.add("app-loaded");
+            }, 100);
+        });
+    </script>
+</body>
 
-            /* Hide loading once React app loads */
-            .app-loaded .loading-container {
-                display: none;
-            }
-
-            /* Safe area support for iOS */
-            @supports (padding: max(0px)) {
-                body {
-                    padding-left: max(0px, env(safe-area-inset-left));
-                    padding-right: max(0px, env(safe-area-inset-right));
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Loading Screen -->
-        <div class="loading-container">
-            <div class="loading-spinner"></div>
-        </div>
-
-        <!-- React App Root -->
-        <div id="root"></div>
-
-        <!-- Main App Script -->
-        <script type="module" src="/src/main.tsx"></script>
-
-        <!-- Remove loading screen once app loads -->
-        <script>
-            window.addEventListener("load", () => {
-                setTimeout(() => {
-                    document.body.classList.add("app-loaded");
-                }, 100);
-            });
-        </script>
-    </body>
 </html>

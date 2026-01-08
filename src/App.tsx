@@ -126,6 +126,18 @@ function App() {
     setSearchQuery("");
   }, []);
 
+  const handleTogglePin = useCallback(
+    (note: Note) => {
+      if (note.id) {
+        updateNote({ ...note, pinned: !note.pinned });
+        showNotification(
+          note.pinned ? "Note unpinned" : "Note pinned to top"
+        );
+      }
+    },
+    [updateNote, showNotification]
+  );
+
   const toggleViewMode = useCallback(() => {
     setViewMode((prev) => (prev === "grid" ? "list" : "grid"));
   }, []);
@@ -295,6 +307,7 @@ function App() {
                 notes={filteredNotes}
                 onSelectNote={handleSelectNote}
                 onDeleteNote={handleDeleteSpecificNote}
+                onTogglePin={handleTogglePin}
                 viewMode={viewMode}
                 searchQuery={searchQuery}
               />

@@ -1,51 +1,47 @@
 import { createTheme, responsiveFontSizes, ThemeOptions } from "@mui/material/styles";
 
-// Dark Theme - "Midnight Violet"
+// Custom font: "Outfit" for that premium tech look
+const typography = {
+  fontFamily: ["'Outfit'", "'Inter'", "sans-serif"].join(","),
+  h1: { fontWeight: 800, letterSpacing: "-0.04em" },
+  h2: { fontWeight: 800, letterSpacing: "-0.03em" },
+  h3: { fontWeight: 700, letterSpacing: "-0.02em" },
+  h4: { fontWeight: 700, letterSpacing: "-0.02em" },
+  h5: { fontWeight: 600 },
+  h6: { fontWeight: 600 },
+  button: { textTransform: "none", fontWeight: 700 },
+};
+
+// Dark Theme - "Deep Obsidian"
 export const darkThemeOptions: ThemeOptions = {
   palette: {
     mode: "dark",
     primary: {
-      main: "#D0BCFF",
-      light: "#EADDFF",
-      dark: "#381E72",
-      contrastText: "#381E72",
-    },
-    secondary: {
-      main: "#CCC2DC",
-      light: "#E8DEF8",
-      dark: "#332D41",
-      contrastText: "#332D41",
+      main: "#BB86FC",
+      light: "#D0BCFF",
+      dark: "#7B52AB",
+      contrastText: "#000000",
     },
     background: {
-      default: "#141218", // MD3 Dark Background
-      paper: "#1D1B20", // MD3 Dark Surface
+      default: "#08080A",
+      paper: "#111114",
     },
     text: {
-      primary: "#E6E1E5",
-      secondary: "#CAC4D0",
+      primary: "#FFFFFF",
+      secondary: "rgba(255, 255, 255, 0.6)",
     },
-    divider: "rgba(147, 143, 153, 0.25)",
   },
-  typography: {
-    fontFamily: ["'Outfit'", "'Inter'", "sans-serif"].join(","),
-    h4: { fontWeight: 700, letterSpacing: "-0.02em" },
-  },
-  shape: { borderRadius: 28 },
+  typography,
+  shape: { borderRadius: 32 },
   components: {
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "rgba(20, 18, 24, 0.8)",
+          backgroundColor: "rgba(8, 8, 10, 0.75)",
           backdropFilter: "blur(20px)",
           boxShadow: "none",
           borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
         },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: { borderRadius: 16, textTransform: "none", fontWeight: 600 },
-        contained: { boxShadow: "none", "&:hover": { boxShadow: "0 4px 12px rgba(208, 188, 255, 0.3)" } },
       },
     },
     MuiCard: {
@@ -54,69 +50,95 @@ export const darkThemeOptions: ThemeOptions = {
           backgroundColor: "rgba(255, 255, 255, 0.03)",
           backdropFilter: "blur(10px)",
           border: "1px solid rgba(255, 255, 255, 0.1)",
-          borderRadius: 28,
+          borderRadius: 32,
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          "&:hover": {
+            borderColor: "rgba(187, 134, 252, 0.3)",
+            transform: "translateY(-4px) scale(1.02)",
+            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
+          },
         },
       },
     },
   },
 };
 
-// Light Theme - "Soft Lavender"
+// Light Theme - "Cyber Crystal"
 export const lightThemeOptions: ThemeOptions = {
   palette: {
     mode: "light",
     primary: {
-      main: "#6750A4",
-      light: "#EADDFF",
-      dark: "#21005D",
+      main: "#6A00FF", // Ultra vibrant violet
+      light: "#9D55FF",
+      dark: "#4500AB",
       contrastText: "#FFFFFF",
     },
     secondary: {
-      main: "#625B71",
-      light: "#E8DEF8",
-      dark: "#1D192B",
-      contrastText: "#FFFFFF",
+      main: "#00F2FF", // Cyber cyan
+      contrastText: "#000000",
     },
     background: {
-      default: "#FDFBFF", // Ultra clean white with purple tint
-      paper: "#F4F2F7", // Soft tinted surface
+      default: "#FFFFFF",
+      paper: "#F5F7FF",
     },
     text: {
-      primary: "#1C1B1F",
-      secondary: "#49454F",
+      primary: "#09090B",
+      secondary: "#52525B",
     },
-    divider: "rgba(121, 116, 126, 0.15)",
   },
-  typography: {
-    fontFamily: ["'Outfit'", "'Inter'", "sans-serif"].join(","),
-    h4: { fontWeight: 700, letterSpacing: "-0.02em" },
-  },
-  shape: { borderRadius: 28 },
+  typography,
+  shape: { borderRadius: 32 },
   components: {
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "rgba(253, 251, 255, 0.8)",
-          backdropFilter: "blur(20px)",
-          boxShadow: "none",
-          borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
-          color: "#1C1B1F",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(25px)",
+          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.03)",
+          color: "#09090B",
+          borderBottom: "1px solid rgba(106, 0, 255, 0.1)",
         },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: { borderRadius: 16, textTransform: "none", fontWeight: 600 },
-        contained: { boxShadow: "none", "&:hover": { boxShadow: "0 4px 12px rgba(103, 80, 164, 0.2)" } },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
           backgroundColor: "#FFFFFF",
-          border: "1px solid rgba(0, 0, 0, 0.05)",
-          borderRadius: 28,
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.03)",
+          border: "1px solid rgba(106, 0, 255, 0.05)",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.04)",
+          borderRadius: 32,
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          "&:hover": {
+            transform: "translateY(-6px) scale(1.01)",
+            boxShadow: "0 30px 60px rgba(106, 0, 255, 0.1)",
+            borderColor: "rgba(106, 0, 255, 0.2)",
+          },
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: { borderRadius: 16 },
+        contained: {
+          background: "linear-gradient(135deg, #6A00FF 0%, #9D55FF 100%)",
+          boxShadow: "0 8px 16px rgba(106, 0, 255, 0.2)",
+          "&:hover": {
+            boxShadow: "0 12px 24px rgba(106, 0, 255, 0.3)",
+            transform: "translateY(-1px)",
+          },
+        },
+      },
+    },
+    MuiFab: {
+      styleOverrides: {
+        root: {
+          background: "linear-gradient(135deg, #6A00FF 0%, #00F2FF 100%)",
+          boxShadow: "0 15px 35px rgba(106, 0, 255, 0.25)",
+          color: "#FFFFFF",
+          "&:hover": {
+            boxShadow: "0 20px 45px rgba(106, 0, 255, 0.35)",
+            transform: "rotate(10deg) scale(1.1)",
+          },
         },
       },
     },

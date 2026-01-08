@@ -1,7 +1,7 @@
 {
   "name": "noteeeee-app",
   "private": false,
-  "version": "3.2.0",
+  "version": "3.3.0",
   "type": "module",
   "description": "A beautiful, modern note-taking app built with React, Material-UI, and Framer Motion. Features responsive design, search functionality, and smooth animations.",
   "keywords": [

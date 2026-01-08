@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Background layer for the foreground drawable (if needed) -->
+    <!-- Stylized 'N' Path -->
+    <path
+        android:pathData="M30,30 L30,78 L54,54 L78,78 L78,30"
+        android:strokeColor="#BB86FC"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+        
+    <!-- Top accent bar for 'Note' feel -->
+    <path
+        android:pathData="M30,30 L78,30"
+        android:strokeColor="#BB86FC"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.4" />
+        
+    <!-- Bottom accent dots for MD3 style -->
+    <path
+        android:pathData="M54,88 L54,88.1"
+        android:strokeColor="#BB86FC"
+        android:strokeWidth="6"
+        android:strokeLineCap="round" />
+</vector>

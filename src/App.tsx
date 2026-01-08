@@ -231,19 +231,33 @@ function App() {
     setActiveNote((prev) => (prev ? { ...prev, tags } : null));
   }, []);
 
+  const appBgColor = activeNote?.color
+    ? `${activeNote.color}66` // More visible tint to cover the black area
+    : "background.default";
+
+  const appBarBg = activeNote?.color
+    ? `${activeNote.color}CC`
+    : selectedNoteIds.length > 0
+      ? "primary.dark"
+      : "rgba(20, 18, 24, 0.8)";
+
   return (
     <ThemeProvider theme={currentTheme}>
       <CssBaseline />
-      <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+      <Box sx={{
+        minHeight: "100vh",
+        bgcolor: appBgColor,
+        transition: "background-color 0.4s ease",
+      }}>
         <AppBar
           position="fixed"
           elevation={0}
           sx={{
             pt: "env(safe-area-inset-top)",
-            bgcolor: selectedNoteIds.length > 0 ? "primary.dark" : "rgba(20, 18, 24, 0.8)",
+            bgcolor: appBarBg,
             backdropFilter: "blur(20px)",
             borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-            transition: "all 0.3s ease",
+            transition: "all 0.4s ease",
           }}
         >
           <Container maxWidth="lg">

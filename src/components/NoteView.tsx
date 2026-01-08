@@ -180,7 +180,10 @@ const NoteViewComponent = ({
       <Paper
         elevation={0}
         sx={{
-          background: noteBackground,
+          background: {
+            xs: activeNote.color ? "transparent" : noteBackground,
+            sm: noteBackground,
+          },
           backdropFilter: { xs: "none", sm: "blur(20px)" },
           border: { xs: "none", sm: "1px solid rgba(255, 255, 255, 0.1)" },
           borderRadius: { xs: 0, sm: 4 },

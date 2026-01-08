@@ -1,13 +1,42 @@
 {
-  "name": "note-app",
-  "private": true,
-  "version": "0.0.0",
+  "name": "noteeeee-app",
+  "private": false,
+  "version": "2.0.0",
   "type": "module",
+  "description": "A beautiful, modern note-taking app built with React, Material-UI, and Framer Motion. Features responsive design, search functionality, and smooth animations.",
+  "keywords": [
+    "notes",
+    "note-taking",
+    "react",
+    "material-ui",
+    "framer-motion",
+    "capacitor",
+    "mobile-app",
+    "pwa",
+    "responsive"
+  ],
+  "author": "oki3505F",
+  "license": "MIT",
+  "homepage": "https://github.com/oki3505F/noteeeee-app#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oki3505F/noteeeee-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oki3505F/noteeeee-app/issues"
+  },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "lint": "eslint . --fix",
+    "lint:check": "eslint .",
+    "preview": "vite preview --host",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules/.vite",
+    "cap:sync": "npx cap sync",
+    "cap:open": "npx cap open",
+    "android:build": "npm run build && npx cap sync android && cd android && ./gradlew assembleDebug",
+    "android:run": "npm run build && npx cap sync android && npx cap run android"
   },
   "dependencies": {
     "@capacitor/android": "^6.0.0",
@@ -33,5 +62,9 @@
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.11.0",
     "vite": "^5.4.10"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

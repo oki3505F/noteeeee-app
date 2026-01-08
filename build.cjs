@@ -18,7 +18,7 @@ function run(cmd, args, cwd = projectRoot) {
     }
 }
 
-console.log('Building v3.7.0 - The Multipart Backup Update...');
+console.log('Building v3.8.0 - The QoL & Cleanup Update...');
 run(nodeBin, [npmCli, 'run', 'build']);
 run(nodeBin, [npmCli, 'exec', 'cap', 'sync', 'android']);
 run('bash', [path.join(projectRoot, 'android/gradlew'), 'assembleDebug'], path.join(projectRoot, 'android'));

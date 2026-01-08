@@ -26,8 +26,8 @@ import { NoteView } from "./components/NoteView";
 import { SearchBar } from "./components/SearchBar";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import { BackupMenu } from "./components/BackupMenu";
-import { BackupService } from "./services/BackupService";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
 
 const pageVariants = {
   initial: { x: 50, opacity: 0 },
@@ -47,7 +47,7 @@ const MotionFab = motion(Fab);
 export type ViewMode = "grid" | "list";
 
 function App() {
-  const { notes, addNote, updateNote, deleteNote, deleteNotes, importNotes } = useNotes();
+  const { notes, addNote, updateNote, deleteNote, deleteNotes } = useNotes();
   const [activeNote, setActiveNote] = useState<Note | null>(null);
   const [selectedNoteIds, setSelectedNoteIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -65,13 +65,21 @@ function App() {
 
   const allTags = Array.from(new Set(notes.flatMap((n) => n.tags || [])));
 
-  const filteredNotes = notes.filter((note) => {
-    const matchesSearch =
-      note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      note.content.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesTag = !selectedTag || note.tags?.includes(selectedTag);
-    return matchesSearch && matchesTag;
-  });
+  const filteredNotes = notes
+    .filter((note) => {
+      const matchesSearch =
+        note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        note.content.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesTag = !selectedTag || note.tags?.includes(selectedTag);
+      return matchesSearch && matchesTag;
+    })
+    .sort((a, b) => {
+      // Pinning logic should probably still come first? 
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      // Then sort by date
+      return new Date(b.lastEdited).getTime() - new Date(a.lastEdited).getTime();
+    });
 
   const showNotification = useCallback(
     (message: string, severity: "success" | "error" | "info" = "success") => {
@@ -233,58 +241,6 @@ function App() {
     setActiveNote((prev) => (prev ? { ...prev, tags } : null));
   }, []);
 
-  const handleExportNotes = useCallback(() => {
-    try {
-      const dataStr = JSON.stringify(notes, null, 2);
-      const dataBlob = new Blob([dataStr], { type: "application/json" });
-      const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `noteeeee_backup_${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      showNotification("Notes exported successfully");
-    } catch (error) {
-      console.error("Export failed", error);
-      showNotification("Export failed", "error");
-    }
-  }, [notes, showNotification]);
-
-  const handleMultipartExport = useCallback(async () => {
-    try {
-      const blob = await BackupService.createMultipartBackup(notes);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `noteeeee_backup_folder_${new Date().toISOString().split('T')[0]}.zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      showNotification("Multipart backup exported (ZIP)");
-    } catch (error) {
-      console.error("Multipart export failed", error);
-      showNotification("Multipart export failed", "error");
-    }
-  }, [notes, showNotification]);
-
-  const handleImportNotes = useCallback(async (files: FileList) => {
-    try {
-      const importedNotes = await BackupService.parseMultipartBackup(files);
-      if (importedNotes.length > 0) {
-        importNotes(importedNotes);
-        showNotification(`Successfully imported ${importedNotes.length} notes`);
-      } else {
-        showNotification("No valid notes found in selection", "error");
-      }
-    } catch (error) {
-      console.error("Import failed", error);
-      showNotification("Import failed", "error");
-    }
-  }, [importNotes, showNotification]);
-
   const appBgColor = activeNote?.color
     ? `${activeNote.color}66` // More visible tint to cover the black area
     : "background.default";
@@ -351,11 +307,6 @@ function App() {
                 <IconButton color="inherit" onClick={toggleTheme}>
                   {themeMode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton>
-                <BackupMenu
-                  onExport={handleExportNotes}
-                  onMultipartExport={handleMultipartExport}
-                  onImport={handleImportNotes}
-                />
               </Stack>
             ) : (
               <Stack spacing={0} sx={{ py: 1.5 }}>
@@ -467,16 +418,56 @@ function App() {
                   onImageRemove={handleImageRemove}
                 />
               ) : (
-                <NoteList
-                  notes={filteredNotes}
-                  onSelectNote={handleSelectNote}
-                  onDeleteNote={handleDeleteSpecificNote}
-                  onTogglePin={handleTogglePin}
-                  viewMode={viewMode}
-                  searchQuery={searchQuery}
-                  selectedIds={selectedNoteIds}
-                  onToggleSelection={handleToggleSelection}
-                />
+                filteredNotes.length > 0 ? (
+                  <NoteList
+                    notes={filteredNotes}
+                    onSelectNote={handleSelectNote}
+                    onDeleteNote={handleDeleteSpecificNote}
+                    onTogglePin={handleTogglePin}
+                    viewMode={viewMode}
+                    searchQuery={searchQuery}
+                    selectedIds={selectedNoteIds}
+                    onToggleSelection={handleToggleSelection}
+                  />
+                ) : (
+                  <Box
+                    component={motion.div}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    sx={{
+                      mt: 12,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textAlign: "center",
+                      color: "text.secondary",
+                      px: 4
+                    }}
+                  >
+                    {searchQuery || selectedTag ? (
+                      <>
+                        <SearchOffIcon sx={{ fontSize: 80, mb: 2, opacity: 0.3, color: 'primary.main' }} />
+                        <Typography variant="h5" sx={{ fontWeight: 700, mb: 1, color: 'text.primary' }}>
+                          No results found
+                        </Typography>
+                        <Typography variant="body1">
+                          Try adjusting your search or filters to find what you're looking for.
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <NoteAddIcon sx={{ fontSize: 80, mb: 2, opacity: 0.3, color: 'primary.main' }} />
+                        <Typography variant="h5" sx={{ fontWeight: 700, mb: 1, color: 'text.primary' }}>
+                          Your thoughts start here
+                        </Typography>
+                        <Typography variant="body1">
+                          Tap the "+" button to create your first note and start organizing your life.
+                        </Typography>
+                      </>
+                    )}
+                  </Box>
+                )
               )}
             </motion.div>
           </AnimatePresence>

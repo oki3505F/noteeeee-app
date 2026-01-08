@@ -9,6 +9,7 @@ import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import LinearProgress from "@mui/material/LinearProgress";
+import Divider from "@mui/material/Divider";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -418,33 +419,64 @@ const NoteViewComponent = ({
               }}
             />
 
-            <TextField
-              inputRef={contentRef}
-              label="Content"
-              name="content"
-              value={activeNote.content}
-              onChange={onChange}
-              fullWidth
-              multiline
-              rows={window.innerHeight < 700 ? 8 : 12}
-              variant="filled"
-              placeholder="Start writing your note..."
-              sx={{
-                "& .MuiFilledInput-root": {
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.08)",
+            <Box sx={{ position: 'relative' }}>
+              <TextField
+                inputRef={contentRef}
+                label="Content"
+                name="content"
+                value={activeNote.content}
+                onChange={onChange}
+                fullWidth
+                multiline
+                rows={window.innerHeight < 700 ? 8 : 12}
+                variant="filled"
+                placeholder="Start writing your note..."
+                sx={{
+                  "& .MuiFilledInput-root": {
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.08)",
+                    },
+                    "&.Mui-focused": {
+                      backgroundColor: "rgba(187, 134, 252, 0.1)",
+                    },
                   },
-                  "&.Mui-focused": {
-                    backgroundColor: "rgba(187, 134, 252, 0.1)",
+                  "& .MuiInputBase-input": {
+                    lineHeight: 1.6,
+                    fontSize: { xs: "1rem", sm: "1.1rem" },
+                    pb: 6, // Add space for the floating counter
                   },
-                },
-                "& .MuiInputBase-input": {
-                  lineHeight: 1.6,
-                  fontSize: { xs: "1rem", sm: "1.1rem" },
-                },
-              }}
-            />
+                }}
+              />
+              <Box
+                component={motion.div}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                sx={{
+                  position: 'absolute',
+                  bottom: 12,
+                  right: 12,
+                  display: 'flex',
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.5,
+                  borderRadius: 2,
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  pointerEvents: 'none',
+                  zIndex: 2,
+                }}
+              >
+                <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)', fontWeight: 600 }}>
+                  {wordCount} <Box component="span" sx={{ fontSize: '0.65rem', opacity: 0.7 }}>WORDS</Box>
+                </Typography>
+                <Divider orientation="vertical" flexItem sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
+                <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)', fontWeight: 600 }}>
+                  {charCount} <Box component="span" sx={{ fontSize: '0.65rem', opacity: 0.7 }}>CHARS</Box>
+                </Typography>
+              </Box>
+            </Box>
 
             {/* Action buttons */}
             <Stack

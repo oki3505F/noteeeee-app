@@ -1,7 +1,7 @@
 {
   "name": "noteeeee-app",
   "private": false,
-  "version": "3.7.0",
+  "version": "3.8.0",
   "type": "module",
   "description": "A beautiful, modern note-taking app built with React, Material-UI, and Framer Motion. Features responsive design, search functionality, and smooth animations.",
   "keywords": [
@@ -42,14 +42,11 @@
     "@capacitor/android": "^6.0.0",
     "@capacitor/cli": "^6.0.0",
     "@capacitor/core": "^6.0.0",
-    "@capacitor/filesystem": "^6.0.4",
-    "@capacitor/share": "^6.0.4",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^5.18.0",
     "@mui/material": "^5.18.0",
     "framer-motion": "^12.24.10",
-    "jszip": "^3.10.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

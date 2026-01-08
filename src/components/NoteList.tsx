@@ -34,15 +34,21 @@ interface NoteListProps {
 }
 
 const formatDate = (isoString: string) => {
-  if (!isoString) return "";
+  if (!isoString) return "Never";
   const date = new Date(isoString);
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - date.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffMinutes = Math.floor(diffTime / (1000 * 60));
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
 
-  if (diffDays === 1) return "Today";
-  if (diffDays === 2) return "Yesterday";
-  if (diffDays <= 7) return `${diffDays - 1} days ago`;
+  if (diffMinutes < 1) return "Just now";
+  if (diffMinutes === 1) return "1 minute ago";
+  if (diffMinutes < 60) return `${diffMinutes} mins ago`;
+  if (diffHours === 1) return "1 hour ago";
+  if (diffHours < 24) return `${diffHours} hours ago`;
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
 
   return date.toLocaleDateString(undefined, {
     year: "numeric",
@@ -297,7 +303,7 @@ const GridView = ({
                     color="text.secondary"
                     sx={{ fontSize: "0.75rem" }}
                   >
-                    {formatDate(note.lastEdited)}
+                    Edited {formatDate(note.lastEdited)}
                   </Typography>
 
                   <Chip
@@ -449,7 +455,7 @@ const ListView = ({
 
                   <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                     <Typography variant="caption" color="text.secondary">
-                      {formatDate(note.lastEdited)}
+                      Edited {formatDate(note.lastEdited)}
                     </Typography>
                     <Chip
                       label={`${getWordCount(note.content)} words`}

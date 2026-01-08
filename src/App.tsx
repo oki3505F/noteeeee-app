@@ -146,6 +146,8 @@ function App() {
         sx={{
           backdropFilter: "blur(20px)",
           backgroundColor: "rgba(30, 30, 30, 0.9)",
+          paddingTop: "env(safe-area-inset-top)",
+          height: "calc(64px + env(safe-area-inset-top))",
         }}
       >
         <Toolbar sx={{ px: { xs: 1, sm: 3 } }}>
@@ -223,7 +225,8 @@ function App() {
         </AnimatePresence>
       </AppBar>
 
-      <Toolbar />
+      {/* Spacer for Fixed AppBar */}
+      <Box sx={{ height: "calc(64px + env(safe-area-inset-top))" }} />
       {showSearch && !activeNote && <Box sx={{ height: 72 }} />}
 
       <Container

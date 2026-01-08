@@ -16,6 +16,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import ImageIcon from "@mui/icons-material/Image";
 import PaletteIcon from "@mui/icons-material/Palette";
 import LabelIcon from "@mui/icons-material/Label";
+import CloseIcon from "@mui/icons-material/Close";
 import { motion, AnimatePresence } from "framer-motion";
 import { Note } from "../useNotes";
 
@@ -27,6 +28,7 @@ interface NoteViewProps {
   onDelete: () => void;
   onColorChange: (color: string) => void;
   onTagsChange: (tags: string[]) => void;
+  onImageRemove: (index: number) => void;
 }
 
 const PRESET_COLORS = [
@@ -85,6 +87,7 @@ const NoteViewComponent = ({
   onImageAdd,
   onColorChange,
   onTagsChange,
+  onImageRemove,
 }: NoteViewProps) => {
   const [tagInput, setTagInput] = useState("");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -344,14 +347,42 @@ const NoteViewComponent = ({
                 {activeNote.images.map((img, index) => (
                   <Box
                     key={index}
-                    component="img"
-                    src={img}
                     sx={{
-                      height: 200,
-                      borderRadius: 2,
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      position: "relative",
+                      flexShrink: 0,
+                      "&:hover .remove-img-btn": { opacity: 1 },
                     }}
-                  />
+                  >
+                    <Box
+                      component="img"
+                      src={img}
+                      sx={{
+                        height: 200,
+                        borderRadius: 2,
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        display: "block",
+                      }}
+                    />
+                    <IconButton
+                      className="remove-img-btn"
+                      size="small"
+                      onClick={() => onImageRemove(index)}
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        backgroundColor: "rgba(0,0,0,0.6)",
+                        color: "white",
+                        opacity: { xs: 1, sm: 0 },
+                        transition: "opacity 0.2s",
+                        "&:hover": {
+                          backgroundColor: "rgba(244, 67, 54, 0.8)",
+                        },
+                      }}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
                 ))}
               </Stack>
             )}

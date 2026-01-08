@@ -214,6 +214,15 @@ function App() {
     });
   }, []);
 
+  const handleImageRemove = useCallback((index: number) => {
+    setActiveNote((prevNote) => {
+      if (!prevNote || !prevNote.images) return prevNote;
+      const newImages = [...prevNote.images];
+      newImages.splice(index, 1);
+      return { ...prevNote, images: newImages };
+    });
+  }, []);
+
   const handleColorChange = useCallback((color: string) => {
     setActiveNote((prev) => (prev ? { ...prev, color } : null));
   }, []);
@@ -382,6 +391,7 @@ function App() {
                   onDelete={handleDeleteNote}
                   onColorChange={handleColorChange}
                   onTagsChange={handleTagsChange}
+                  onImageRemove={handleImageRemove}
                 />
               ) : (
                 <NoteList

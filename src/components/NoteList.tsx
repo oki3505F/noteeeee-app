@@ -178,14 +178,15 @@ const GridView = ({
         <Grid item xs={12} sm={6} md={4} lg={3} key={note.id}>
           <motion.div
             layout
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.9 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{
-              duration: 0.3,
-              delay: index * 0.05,
+              duration: 0.2,
+              delay: index * 0.02,
               type: "spring",
-              damping: 20,
+              damping: 25,
+              stiffness: 200,
             }}
             whileHover={{ y: -8, scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -343,14 +344,15 @@ const ListView = ({
         <motion.div
           key={note.id}
           layout
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 50 }}
+          exit={{ opacity: 0, x: 20 }}
           transition={{
-            duration: 0.3,
-            delay: index * 0.03,
+            duration: 0.2,
+            delay: index * 0.02,
             type: "spring",
-            damping: 20,
+            damping: 25,
+            stiffness: 200,
           }}
         >
           <ListItem

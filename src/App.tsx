@@ -28,16 +28,16 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 const pageVariants = {
-  initial: { x: "100vw", opacity: 0 },
+  initial: { x: 50, opacity: 0 },
   in: { x: 0, opacity: 1 },
-  out: { x: "-100vw", opacity: 0 },
+  out: { x: -50, opacity: 0 },
 };
 
 const pageTransition: Transition = {
   type: "spring",
-  damping: 20,
-  stiffness: 100,
-  duration: 0.3,
+  damping: 25,
+  stiffness: 200,
+  mass: 0.5,
 };
 
 const MotionFab = motion(Fab);

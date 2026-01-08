@@ -118,11 +118,11 @@ const NoteViewComponent = ({
     setAutoSaving(true);
     setHasUnsavedChanges(false);
 
-    // Simulate auto-save delay
+    // Faster feedback
     setTimeout(() => {
       onSave();
       setAutoSaving(false);
-    }, 300);
+    }, 50);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -172,9 +172,9 @@ const NoteViewComponent = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
       onKeyDown={handleKeyDown}
     >
       <Paper

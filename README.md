@@ -2,7 +2,7 @@
 
 A simple note-taking application built with React, Vite, and Capacitor. This application is designed to be a simple, and elegant way to create, view, and manage your notes.
 
-![Note App Screenshot](https://i.imgur.com/8WV5MNc.png) 
+![Note App Screenshot](https://upload.wikimedia.org/wikipedia/commons/2/2a/Note_icon.svg) 
 
 ## Features
 
@@ -12,9 +12,9 @@ A simple note-taking application built with React, Vite, and Capacitor. This app
 
 ## Download
 
-You can download the latest Android APK from the link below:
+You can download the latest Android APK from the releases page:
 
-[**Download note-app.apk**](./release/note-app.apk)
+[**Download note-app.apk**](https://github.com/oki3505F/note-app/releases/latest)
 
 ## Getting Started
 

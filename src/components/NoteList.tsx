@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -16,10 +16,15 @@ import ArticleIcon from "@mui/icons-material/Article";
 import { motion, AnimatePresence } from "framer-motion";
 import { Note } from "../useNotes";
 import { ViewMode } from "../App";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface NoteListProps {
   notes: Note[];
   onSelectNote: (note: Note) => void;
+  onDeleteNote: (note: Note) => void;
   viewMode: ViewMode;
   searchQuery: string;
 }
@@ -151,10 +156,12 @@ const EmptyState = ({ searchQuery }: { searchQuery: string }) => (
 const GridView = ({
   notes,
   onSelectNote,
+  onContextMenu,
   searchQuery,
 }: {
   notes: Note[];
   onSelectNote: (note: Note) => void;
+  onContextMenu: (event: React.MouseEvent, note: Note) => void;
   searchQuery: string;
 }) => (
   <Grid container spacing={{ xs: 2, sm: 3 }}>
@@ -177,6 +184,7 @@ const GridView = ({
           >
             <Card
               onClick={() => onSelectNote(note)}
+              onContextMenu={(e) => onContextMenu(e, note)}
               sx={{
                 cursor: "pointer",
                 height: "100%",
@@ -282,10 +290,14 @@ const GridView = ({
 const ListView = ({
   notes,
   onSelectNote,
+  onContextMenu,
+  onMoreClick,
   searchQuery,
 }: {
   notes: Note[];
   onSelectNote: (note: Note) => void;
+  onContextMenu: (event: React.MouseEvent, note: Note) => void;
+  onMoreClick: (event: React.MouseEvent, note: Note) => void;
   searchQuery: string;
 }) => (
   <List sx={{ width: "100%", px: 0 }}>
@@ -306,6 +318,7 @@ const ListView = ({
         >
           <ListItem
             onClick={() => onSelectNote(note)}
+            onContextMenu={(e) => onContextMenu(e, note)}
             sx={{
               cursor: "pointer",
               py: 2,
@@ -406,10 +419,7 @@ const ListView = ({
                     backgroundColor: "rgba(187, 134, 252, 0.1)",
                   },
                 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Future: Add context menu
-                }}
+                onClick={(e) => onMoreClick(e, note)}
               >
                 <MoreVertIcon fontSize="small" />
               </IconButton>
@@ -426,9 +436,50 @@ const ListView = ({
 const NoteListComponent = ({
   notes,
   onSelectNote,
+  onDeleteNote,
   viewMode,
   searchQuery,
 }: NoteListProps) => {
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number;
+    mouseY: number;
+    note: Note | null;
+  } | null>(null);
+
+  const handleContextMenu = (event: React.MouseEvent, note: Note) => {
+    event.preventDefault();
+    setContextMenu(
+      contextMenu === null
+        ? {
+          mouseX: event.clientX + 2,
+          mouseY: event.clientY - 6,
+          note,
+        }
+        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+        null,
+    );
+  };
+
+  const handleMoreClick = (event: React.MouseEvent, note: Note) => {
+    event.stopPropagation();
+    setContextMenu({
+      mouseX: event.clientX + 2,
+      mouseY: event.clientY - 6,
+      note,
+    });
+  };
+
+  const handleClose = () => {
+    setContextMenu(null);
+  };
+
+  const handleDelete = () => {
+    if (contextMenu?.note) {
+      onDeleteNote(contextMenu.note);
+    }
+    handleClose();
+  };
+
   if (notes.length === 0) {
     return <EmptyState searchQuery={searchQuery} />;
   }
@@ -449,15 +500,43 @@ const NoteListComponent = ({
         <GridView
           notes={sortedNotes}
           onSelectNote={onSelectNote}
+          onContextMenu={handleContextMenu}
           searchQuery={searchQuery}
         />
       ) : (
         <ListView
           notes={sortedNotes}
           onSelectNote={onSelectNote}
+          onContextMenu={handleContextMenu}
+          onMoreClick={handleMoreClick}
           searchQuery={searchQuery}
         />
       )}
+
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleClose}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+        PaperProps={{
+          sx: {
+            backgroundColor: "#2d2d2d",
+            color: "white",
+            backgroundImage: "none",
+          }
+        }}
+      >
+        <MenuItem onClick={handleDelete} sx={{ color: "#ff5252" }}>
+          <ListItemIcon>
+            <DeleteIcon fontSize="small" sx={{ color: "#ff5252" }} />
+          </ListItemIcon>
+          <ListItemText>Delete</ListItemText>
+        </MenuItem>
+      </Menu>
     </motion.div>
   );
 };

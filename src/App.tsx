@@ -111,6 +111,16 @@ function App() {
     setActiveNote(null);
   }, [activeNote, deleteNote, showNotification]);
 
+  const handleDeleteSpecificNote = useCallback(
+    (note: Note) => {
+      if (note.id && note.id !== "new") {
+        deleteNote(note.id);
+        showNotification("Note deleted successfully");
+      }
+    },
+    [deleteNote, showNotification],
+  );
+
   const handleBack = useCallback(() => {
     setActiveNote(null);
     setSearchQuery("");
@@ -208,7 +218,6 @@ function App() {
                       onClick={toggleViewMode}
                       sx={{
                         color: "rgba(230, 225, 229, 0.7)",
-                        display: { xs: "none", sm: "flex" },
                       }}
                     >
                       {viewMode === "grid" ? (
@@ -285,6 +294,7 @@ function App() {
               <NoteList
                 notes={filteredNotes}
                 onSelectNote={handleSelectNote}
+                onDeleteNote={handleDeleteSpecificNote}
                 viewMode={viewMode}
                 searchQuery={searchQuery}
               />

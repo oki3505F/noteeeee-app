@@ -21,9 +21,9 @@
         <meta name="author" content="oki3505F" />
 
         <!-- Theme Colors -->
-        <meta name="theme-color" content="#BB86FC" />
-        <meta name="msapplication-TileColor" content="#BB86FC" />
-        <meta name="msapplication-navbutton-color" content="#BB86FC" />
+        <meta name="theme-color" content="#141218" />
+        <meta name="msapplication-TileColor" content="#D0BCFF" />
+        <meta name="msapplication-navbutton-color" content="#141218" />
         <meta
             name="apple-mobile-web-app-status-bar-style"
             content="black-translucent"
@@ -42,11 +42,11 @@
         />
         <meta
             property="og:title"
-            content="Noteeeee App - Beautiful Note Taking"
+            content="Noteeeee - Premium Note Taking"
         />
         <meta
             property="og:description"
-            content="A beautiful, modern note-taking app with exceptional mobile UX. Create, search, and organize your notes with style."
+            content="Experience note-taking evolved. Material Design 3 aesthetics, fluid animations, and uncompromising performance."
         />
         <meta property="og:image" content="/og-image.png" />
 
@@ -58,11 +58,11 @@
         />
         <meta
             property="twitter:title"
-            content="Noteeeee App - Beautiful Note Taking"
+            content="Noteeeee - Premium Note Taking"
         />
         <meta
             property="twitter:description"
-            content="A beautiful, modern note-taking app with exceptional mobile UX. Create, search, and organize your notes with style."
+            content="Experience note-taking evolved. Material Design 3 aesthetics, fluid animations, and uncompromising performance."
         />
         <meta property="twitter:image" content="/og-image.png" />
 
@@ -91,7 +91,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@300;400;500;600;700&display=swap"
             rel="stylesheet"
         />
 
@@ -104,10 +104,10 @@
             body {
                 margin: 0;
                 padding: 0;
-                background-color: #0d1117;
-                color: #f0f6fc;
+                background-color: #000000;
+                color: #e6e1e5;
                 font-family:
-                    "Inter",
+                    "Roboto Flex",
                     -apple-system,
                     BlinkMacSystemFont,
                     "Segoe UI",
@@ -132,17 +132,17 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+                background-color: #000000;
                 z-index: 9999;
             }
 
             .loading-spinner {
-                width: 40px;
-                height: 40px;
-                border: 3px solid rgba(187, 134, 252, 0.2);
-                border-top: 3px solid #bb86fc;
+                width: 48px;
+                height: 48px;
+                border: 4px solid rgba(208, 188, 255, 0.3);
+                border-top: 4px solid #d0bcff;
                 border-radius: 50%;
-                animation: spin 1s linear infinite;
+                animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
             }
 
             @keyframes spin {

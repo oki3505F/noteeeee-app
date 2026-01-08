@@ -2,9 +2,10 @@ import { useState, useCallback } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import Avatar from "@mui/material/Avatar";
 import Fab from "@mui/material/Fab";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -12,7 +13,6 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import SearchIcon from "@mui/icons-material/Search";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import { AnimatePresence, motion, Transition } from "framer-motion";
@@ -43,7 +43,6 @@ function App() {
   const { notes, addNote, updateNote, deleteNote } = useNotes();
   const [activeNote, setActiveNote] = useState<Note | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [notification, setNotification] = useState<{
     open: boolean;
@@ -115,16 +114,8 @@ function App() {
 
   const handleBack = useCallback(() => {
     setActiveNote(null);
-    setShowSearch(false);
     setSearchQuery("");
   }, []);
-
-  const toggleSearch = useCallback(() => {
-    setShowSearch(!showSearch);
-    if (showSearch) {
-      setSearchQuery("");
-    }
-  }, [showSearch]);
 
   const toggleViewMode = useCallback(() => {
     setViewMode((prev) => (prev === "grid" ? "list" : "grid"));
@@ -145,89 +136,129 @@ function App() {
         elevation={0}
         sx={{
           backdropFilter: "blur(20px)",
-          backgroundColor: "rgba(30, 30, 30, 0.9)",
+          backgroundColor: "rgba(20, 18, 24, 0.8)",
           paddingTop: "env(safe-area-inset-top)",
-          height: "calc(64px + env(safe-area-inset-top))",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
         }}
       >
-        <Toolbar sx={{ px: { xs: 1, sm: 3 } }}>
-          <AnimatePresence>
-            {activeNote && (
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 }, py: 1 }}>
+          <Stack spacing={2}>
+            {/* Header Row: Title & Action */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                height: 48,
+              }}
+            >
+              <AnimatePresence mode="wait">
+                {activeNote ? (
+                  <motion.div
+                    key="back-button"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                  >
+                    <IconButton
+                      edge="start"
+                      color="inherit"
+                      onClick={handleBack}
+                      sx={{ mr: 1 }}
+                    >
+                      <ArrowBackIcon />
+                    </IconButton>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="app-title"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    <Typography
+                      variant="h4"
+                      component="h1"
+                      sx={{
+                        fontWeight: 700,
+                        letterSpacing: "-0.02em",
+                        background: "linear-gradient(to right, #D0BCFF, #E8DEF8)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                      }}
+                    >
+                      Notes
+                    </Typography>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                {!activeNote && (
+                  <>
+                    <IconButton
+                      onClick={toggleViewMode}
+                      sx={{
+                        color: "rgba(230, 225, 229, 0.7)",
+                        display: { xs: "none", sm: "flex" },
+                      }}
+                    >
+                      {viewMode === "grid" ? (
+                        <ViewListIcon />
+                      ) : (
+                        <ViewModuleIcon />
+                      )}
+                    </IconButton>
+                    <Avatar
+                      sx={{
+                        bgcolor: "#D0BCFF",
+                        color: "#381E72",
+                        width: 36,
+                        height: 36,
+                        fontSize: "0.9rem",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                      }}
+                    >
+                      A
+                    </Avatar>
+                  </>
+                )}
+                {activeNote && (
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    {getAppBarTitle()}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+
+            {/* Search Bar Row - Permanent */}
+            {!activeNote && (
               <motion.div
-                initial={{ scale: 0, opacity: 0, rotate: -180 }}
-                animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                exit={{ scale: 0, opacity: 0, rotate: 180 }}
-                transition={{ type: "spring", damping: 15 }}
+                layout
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
               >
-                <IconButton
-                  color="inherit"
-                  size="large"
-                  sx={{ mr: 1 }}
-                  onClick={handleBack}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
+                <SearchBar
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  resultCount={filteredNotes.length}
+                  totalCount={notes.length}
+                />
               </motion.div>
             )}
-          </AnimatePresence>
-
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              flexGrow: 1,
-              fontWeight: 600,
-              fontSize: { xs: "1.1rem", sm: "1.25rem" },
-            }}
-          >
-            {getAppBarTitle()}
-          </Typography>
-
-          {!activeNote && (
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <IconButton
-                  color="inherit"
-                  onClick={toggleViewMode}
-                  size="large"
-                  sx={{ display: { xs: "none", sm: "flex" } }}
-                >
-                  {viewMode === "grid" ? <ViewListIcon /> : <ViewModuleIcon />}
-                </IconButton>
-              </motion.div>
-
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <IconButton color="inherit" onClick={toggleSearch} size="large">
-                  <SearchIcon />
-                </IconButton>
-              </motion.div>
-            </Box>
-          )}
-        </Toolbar>
-
-        <AnimatePresence>
-          {showSearch && !activeNote && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              style={{ overflow: "hidden" }}
-            >
-              <SearchBar
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                resultCount={filteredNotes.length}
-                totalCount={notes.length}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </Stack>
+        </Container>
       </AppBar>
 
       {/* Spacer for Fixed AppBar */}
-      <Box sx={{ height: "calc(64px + env(safe-area-inset-top))" }} />
-      {showSearch && !activeNote && <Box sx={{ height: 72 }} />}
+      <Box
+        sx={{
+          height: activeNote
+            ? "calc(64px + env(safe-area-inset-top))"
+            : "calc(130px + env(safe-area-inset-top))",
+          transition: "height 0.3s ease",
+        }}
+      />
 
       <Container
         maxWidth="lg"

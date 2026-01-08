@@ -26,8 +26,7 @@ import { NoteView } from "./components/NoteView";
 import { SearchBar } from "./components/SearchBar";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import { GoogleDriveService, GoogleUser } from "./services/GoogleDriveService";
-import { AccountMenu } from "./components/AccountMenu";
+import { BackupMenu } from "./components/BackupMenu";
 
 const pageVariants = {
   initial: { x: 50, opacity: 0 },
@@ -47,7 +46,7 @@ const MotionFab = motion(Fab);
 export type ViewMode = "grid" | "list";
 
 function App() {
-  const { notes, addNote, updateNote, deleteNote, deleteNotes } = useNotes();
+  const { notes, addNote, updateNote, deleteNote, deleteNotes, importNotes } = useNotes();
   const [activeNote, setActiveNote] = useState<Note | null>(null);
   const [selectedNoteIds, setSelectedNoteIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,15 +61,6 @@ function App() {
     message: string;
     severity: "success" | "error" | "info";
   }>({ open: false, message: "", severity: "success" });
-
-  // Cloud Sync States
-  const [user, setUser] = useState<GoogleUser | null>(() => {
-    const saved = localStorage.getItem("googleUser");
-    return saved ? JSON.parse(saved) : null;
-  });
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [lastSynced, setLastSynced] = useState<string | null>(localStorage.getItem("lastSynced"));
-  const [isQuotaFull, setIsQuotaFull] = useState(false);
 
   const allTags = Array.from(new Set(notes.flatMap((n) => n.tags || [])));
 
@@ -242,66 +232,45 @@ function App() {
     setActiveNote((prev) => (prev ? { ...prev, tags } : null));
   }, []);
 
-  const handleCloudSync = useCallback(async () => {
-    if (!user) return;
-    setIsSyncing(true);
+  const handleExportNotes = useCallback(() => {
     try {
-      // Check quota
-      const quota = await GoogleDriveService.checkQuota(user.accessToken);
-      if (quota.usage >= quota.limit * 0.95) { // 95% full
-        setIsQuotaFull(true);
-        showNotification("Google Drive is almost full!", "error");
-      } else {
-        setIsQuotaFull(false);
-      }
+      const dataStr = JSON.stringify(notes, null, 2);
+      const dataBlob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `noteeeee_backup_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showNotification("Notes exported successfully");
+    } catch (error) {
+      console.error("Export failed", error);
+      showNotification("Export failed", "error");
+    }
+  }, [notes, showNotification]);
 
-      const fileId = await GoogleDriveService.findBackupFile(user.accessToken);
-
-      // If no file exists, we'll create one. If it DOES exist, let's merge? 
-      // For simplicity, we'll do "Latest local wins" or "Download if local empty"
-      if (fileId && notes.length === 0) {
-        const cloudNotes = await GoogleDriveService.downloadBackup(user.accessToken, fileId);
-        if (cloudNotes && Array.isArray(cloudNotes)) {
-          // We need a way to batch add notes to our hook... 
-          // For now, let's just push our local notes up
+  const handleImportNotes = useCallback((file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const importedNotes = JSON.parse(content);
+        if (Array.isArray(importedNotes)) {
+          // Re-generate IDs if necessary? No, assume user wants exact restore.
+          importNotes(importedNotes);
+          showNotification(`Successfully imported ${importedNotes.length} notes`);
+        } else {
+          showNotification("Invalid backup file format", "error");
         }
+      } catch (error) {
+        console.error("Import failed", error);
+        showNotification("Failed to parse backup file", "error");
       }
-
-      await GoogleDriveService.uploadBackup(user.accessToken, notes, fileId);
-      const timestamp = new Date().toLocaleString();
-      setLastSynced(timestamp);
-      localStorage.setItem("lastSynced", timestamp);
-      showNotification("Notes backed up to Google Drive");
-    } catch (error) {
-      console.error("Sync failed", error);
-      showNotification("Cloud sync failed. Access token might be expired.", "error");
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [user, notes, showNotification]);
-
-  const handleLogin = async () => {
-    try {
-      const gUser = await GoogleDriveService.signIn();
-      setUser(gUser);
-      localStorage.setItem("googleUser", JSON.stringify(gUser));
-      showNotification(`Connected as ${gUser.name}`);
-    } catch (error) {
-      console.error("Login failed", error);
-      showNotification("Google Login failed", "error");
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await GoogleDriveService.signOut();
-      setUser(null);
-      localStorage.removeItem("googleUser");
-      showNotification("Logged out from Google");
-    } catch (error) {
-      console.error("Logout failed", error);
-    }
-  };
+    };
+    reader.readAsText(file);
+  }, [importNotes, showNotification]);
 
   const appBgColor = activeNote?.color
     ? `${activeNote.color}66` // More visible tint to cover the black area
@@ -369,14 +338,9 @@ function App() {
                 <IconButton color="inherit" onClick={toggleTheme}>
                   {themeMode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton>
-                <AccountMenu
-                  user={user}
-                  onLogin={handleLogin}
-                  onLogout={handleLogout}
-                  onSync={handleCloudSync}
-                  isSyncing={isSyncing}
-                  lastSynced={lastSynced}
-                  isQuotaFull={isQuotaFull}
+                <BackupMenu
+                  onExport={handleExportNotes}
+                  onImport={handleImportNotes}
                 />
               </Stack>
             ) : (

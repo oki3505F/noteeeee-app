@@ -84,5 +84,10 @@ export const useNotes = () => {
     [notes],
   );
 
-  return { notes, addNote, updateNote, deleteNote, deleteNotes };
+  const importNotes = useCallback((newNotes: Note[]) => {
+    setNotes(newNotes);
+    storeNotes(newNotes);
+  }, []);
+
+  return { notes, addNote, updateNote, deleteNote, deleteNotes, importNotes };
 };

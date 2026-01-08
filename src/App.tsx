@@ -232,9 +232,10 @@ function App() {
       <Container
         maxWidth="lg"
         sx={{
-          mt: { xs: 2, sm: 4 },
+          mt: activeNote ? { xs: 0, sm: 4 } : { xs: 2, sm: 4 },
           mb: { xs: 10, sm: 12 },
-          px: { xs: 2, sm: 3 },
+          px: activeNote ? { xs: 0, sm: 3 } : { xs: 2, sm: 3 },
+          maxWidth: activeNote ? { xs: "100%" } : undefined
         }}
       >
         <AnimatePresence mode="wait">

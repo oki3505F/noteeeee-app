@@ -133,12 +133,15 @@ const NoteViewComponent = ({
       <Paper
         elevation={0}
         sx={{
-          background:
-            "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
-          backdropFilter: "blur(20px)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
-          borderRadius: 4,
+          background: {
+            xs: "transparent",
+            sm: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
+          },
+          backdropFilter: { xs: "none", sm: "blur(20px)" },
+          border: { xs: "none", sm: "1px solid rgba(255, 255, 255, 0.1)" },
+          borderRadius: { xs: 0, sm: 4 },
           overflow: "hidden",
+          minHeight: { xs: "calc(100vh - 80px)", sm: "auto" },
         }}
       >
         {/* Header with stats */}

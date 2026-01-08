@@ -27,6 +27,7 @@ import { SearchBar } from "./components/SearchBar";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { BackupMenu } from "./components/BackupMenu";
+import { BackupService } from "./services/BackupService";
 
 const pageVariants = {
   initial: { x: 50, opacity: 0 },
@@ -251,25 +252,37 @@ function App() {
     }
   }, [notes, showNotification]);
 
-  const handleImportNotes = useCallback((file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const content = e.target?.result as string;
-        const importedNotes = JSON.parse(content);
-        if (Array.isArray(importedNotes)) {
-          // Re-generate IDs if necessary? No, assume user wants exact restore.
-          importNotes(importedNotes);
-          showNotification(`Successfully imported ${importedNotes.length} notes`);
-        } else {
-          showNotification("Invalid backup file format", "error");
-        }
-      } catch (error) {
-        console.error("Import failed", error);
-        showNotification("Failed to parse backup file", "error");
+  const handleMultipartExport = useCallback(async () => {
+    try {
+      const blob = await BackupService.createMultipartBackup(notes);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `noteeeee_backup_folder_${new Date().toISOString().split('T')[0]}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showNotification("Multipart backup exported (ZIP)");
+    } catch (error) {
+      console.error("Multipart export failed", error);
+      showNotification("Multipart export failed", "error");
+    }
+  }, [notes, showNotification]);
+
+  const handleImportNotes = useCallback(async (files: FileList) => {
+    try {
+      const importedNotes = await BackupService.parseMultipartBackup(files);
+      if (importedNotes.length > 0) {
+        importNotes(importedNotes);
+        showNotification(`Successfully imported ${importedNotes.length} notes`);
+      } else {
+        showNotification("No valid notes found in selection", "error");
       }
-    };
-    reader.readAsText(file);
+    } catch (error) {
+      console.error("Import failed", error);
+      showNotification("Import failed", "error");
+    }
   }, [importNotes, showNotification]);
 
   const appBgColor = activeNote?.color
@@ -340,6 +353,7 @@ function App() {
                 </IconButton>
                 <BackupMenu
                   onExport={handleExportNotes}
+                  onMultipartExport={handleMultipartExport}
                   onImport={handleImportNotes}
                 />
               </Stack>

@@ -5,18 +5,22 @@ import {
     MenuItem,
     ListItemIcon,
     ListItemText,
-    Tooltip
+    Tooltip,
+    Divider
 } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import BackupIcon from '@mui/icons-material/Backup';
 
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+
 interface BackupMenuProps {
     onExport: () => void;
-    onImport: (file: File) => void;
+    onMultipartExport: () => void;
+    onImport: (files: FileList) => void;
 }
 
-export const BackupMenu = ({ onExport, onImport }: BackupMenuProps) => {
+export const BackupMenu = ({ onExport, onMultipartExport, onImport }: BackupMenuProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -35,9 +39,9 @@ export const BackupMenu = ({ onExport, onImport }: BackupMenuProps) => {
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            onImport(file);
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            onImport(files);
         }
         // Reset input so the same file can be selected again if needed
         event.target.value = '';
@@ -59,7 +63,7 @@ export const BackupMenu = ({ onExport, onImport }: BackupMenuProps) => {
                         mt: 1.5,
                         backgroundColor: 'background.paper',
                         backgroundImage: 'none',
-                        minWidth: 180,
+                        minWidth: 200,
                         borderRadius: 3,
                         '& .MuiMenuItem-root': {
                             py: 1.5,
@@ -75,13 +79,23 @@ export const BackupMenu = ({ onExport, onImport }: BackupMenuProps) => {
                     <ListItemIcon>
                         <FileDownloadIcon fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText>Export Data</ListItemText>
+                    <ListItemText>Export (JSON)</ListItemText>
                 </MenuItem>
+
+                <MenuItem onClick={() => { onMultipartExport(); handleClose(); }}>
+                    <ListItemIcon>
+                        <CreateNewFolderIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Multipart Save (ZIP)</ListItemText>
+                </MenuItem>
+
+                <Divider sx={{ my: 0.5, opacity: 0.1 }} />
+
                 <MenuItem onClick={handleImportClick}>
                     <ListItemIcon>
                         <FileUploadIcon fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText>Import Data</ListItemText>
+                    <ListItemText>Import Data / ZIP</ListItemText>
                 </MenuItem>
             </Menu>
 
@@ -90,7 +104,8 @@ export const BackupMenu = ({ onExport, onImport }: BackupMenuProps) => {
                 type="file"
                 ref={fileInputRef}
                 style={{ display: 'none' }}
-                accept=".json"
+                accept=".json,.zip"
+                multiple
                 onChange={handleFileChange}
             />
         </>

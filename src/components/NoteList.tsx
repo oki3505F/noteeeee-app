@@ -29,6 +29,8 @@ interface NoteListProps {
   onTogglePin: (note: Note) => void;
   viewMode: ViewMode;
   searchQuery: string;
+  selectedIds?: string[];
+  onToggleSelection?: (id: string) => void;
 }
 
 const formatDate = (isoString: string) => {
@@ -160,11 +162,15 @@ const GridView = ({
   onSelectNote,
   onContextMenu,
   searchQuery,
+  selectedIds = [],
+  onToggleSelection,
 }: {
   notes: Note[];
   onSelectNote: (note: Note) => void;
   onContextMenu: (event: React.MouseEvent, note: Note) => void;
   searchQuery: string;
+  selectedIds?: string[];
+  onToggleSelection?: (id: string) => void;
 }) => (
   <Grid container spacing={{ xs: 2, sm: 3 }}>
     <AnimatePresence>
@@ -185,7 +191,13 @@ const GridView = ({
             whileTap={{ scale: 0.98 }}
           >
             <Card
-              onClick={() => onSelectNote(note)}
+              onClick={() => {
+                if (selectedIds.length > 0 && onToggleSelection) {
+                  onToggleSelection(note.id);
+                } else {
+                  onSelectNote(note);
+                }
+              }}
               onContextMenu={(e) => onContextMenu(e, note)}
               sx={{
                 cursor: "pointer",
@@ -193,17 +205,21 @@ const GridView = ({
                 minHeight: { xs: 160, sm: 180 },
                 display: "flex",
                 flexDirection: "column",
-                background:
-                  "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
+                background: note.color
+                  ? `${note.color}44`
+                  : "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
                 backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                border: selectedIds.includes(note.id)
+                  ? "2px solid #BB86FC"
+                  : "1px solid rgba(255, 255, 255, 0.1)",
                 overflow: "hidden",
                 position: "relative",
                 "&:hover": {
                   boxShadow: "0 8px 32px rgba(187, 134, 252, 0.2)",
-                  borderColor: "rgba(187, 134, 252, 0.3)",
+                  borderColor: selectedIds.includes(note.id) ? "#BB86FC" : "rgba(187, 134, 252, 0.3)",
                 },
                 transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                opacity: selectedIds.length > 0 && !selectedIds.includes(note.id) ? 0.6 : 1,
               }}
             >
               {note.pinned && (
@@ -310,12 +326,16 @@ const ListView = ({
   onContextMenu,
   onMoreClick,
   searchQuery,
+  selectedIds = [],
+  onToggleSelection,
 }: {
   notes: Note[];
   onSelectNote: (note: Note) => void;
   onContextMenu: (event: React.MouseEvent, note: Note) => void;
   onMoreClick: (event: React.MouseEvent, note: Note) => void;
   searchQuery: string;
+  selectedIds?: string[];
+  onToggleSelection?: (id: string) => void;
 }) => (
   <List sx={{ width: "100%", px: 0 }}>
     <AnimatePresence>
@@ -334,7 +354,13 @@ const ListView = ({
           }}
         >
           <ListItem
-            onClick={() => onSelectNote(note)}
+            onClick={() => {
+              if (selectedIds.length > 0 && onToggleSelection) {
+                onToggleSelection(note.id);
+              } else {
+                onSelectNote(note);
+              }
+            }}
             onContextMenu={(e) => onContextMenu(e, note)}
             sx={{
               cursor: "pointer",
@@ -342,15 +368,18 @@ const ListView = ({
               px: { xs: 2, sm: 3 },
               mb: 1,
               borderRadius: 2,
-              background: "rgba(255, 255, 255, 0.05)",
+              background: note.color ? `${note.color}33` : "rgba(255, 255, 255, 0.05)",
               backdropFilter: "blur(10px)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
+              border: selectedIds.includes(note.id)
+                ? "2px solid #BB86FC"
+                : "1px solid rgba(255, 255, 255, 0.1)",
               "&:hover": {
                 backgroundColor: "rgba(187, 134, 252, 0.1)",
-                borderColor: "rgba(187, 134, 252, 0.3)",
+                borderColor: selectedIds.includes(note.id) ? "#BB86FC" : "rgba(187, 134, 252, 0.3)",
                 transform: "translateX(8px)",
               },
               transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              opacity: selectedIds.length > 0 && !selectedIds.includes(note.id) ? 0.6 : 1,
             }}
           >
             <Box sx={{ mr: 2 }}>
@@ -468,6 +497,8 @@ const NoteListComponent = ({
   onTogglePin,
   viewMode,
   searchQuery,
+  selectedIds,
+  onToggleSelection,
 }: NoteListProps) => {
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
@@ -541,6 +572,8 @@ const NoteListComponent = ({
           onSelectNote={onSelectNote}
           onContextMenu={handleContextMenu}
           searchQuery={searchQuery}
+          selectedIds={selectedIds}
+          onToggleSelection={onToggleSelection}
         />
       ) : (
         <ListView
@@ -549,6 +582,8 @@ const NoteListComponent = ({
           onContextMenu={handleContextMenu}
           onMoreClick={handleMoreClick}
           searchQuery={searchQuery}
+          selectedIds={selectedIds}
+          onToggleSelection={onToggleSelection}
         />
       )}
 
@@ -582,6 +617,26 @@ const NoteListComponent = ({
           <ListItemText>
             {contextMenu?.note?.pinned ? "Unpin note" : "Pin note"}
           </ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            if (contextMenu?.note && onToggleSelection) {
+              onToggleSelection(contextMenu.note.id);
+            }
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                borderRadius: "50%",
+                border: "2px solid white",
+              }}
+            />
+          </ListItemIcon>
+          <ListItemText>Select</ListItemText>
         </MenuItem>
         <MenuItem onClick={handleDelete} sx={{ color: "#ff5252" }}>
           <ListItemIcon>

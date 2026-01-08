@@ -14,6 +14,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ArticleIcon from "@mui/icons-material/Article";
 import ImageIcon from "@mui/icons-material/Image";
+import PaletteIcon from "@mui/icons-material/Palette";
+import LabelIcon from "@mui/icons-material/Label";
 import { motion, AnimatePresence } from "framer-motion";
 import { Note } from "../useNotes";
 
@@ -23,7 +25,18 @@ interface NoteViewProps {
   onImageAdd: (base64: string) => void;
   onSave: () => void;
   onDelete: () => void;
+  onColorChange: (color: string) => void;
+  onTagsChange: (tags: string[]) => void;
 }
+
+const PRESET_COLORS = [
+  "#121212", // Default
+  "#1C2B3A", // Deep Blue
+  "#2D1C3A", // Purple
+  "#1C3A2D", // Teal
+  "#3A341C", // Gold/Olive
+  "#3A1C1C", // Crimson
+];
 
 const getWordCount = (text: string) => {
   return text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -70,7 +83,10 @@ const NoteViewComponent = ({
   onSave,
   onDelete,
   onImageAdd,
+  onColorChange,
+  onTagsChange,
 }: NoteViewProps) => {
+  const [tagInput, setTagInput] = useState("");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [autoSaving, setAutoSaving] = useState(false);
   const titleRef = useRef<HTMLInputElement>(null);
@@ -127,12 +143,29 @@ const NoteViewComponent = ({
     }
   };
 
+  const handleAddTag = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && tagInput.trim()) {
+      e.preventDefault();
+      const newTags = [...(activeNote.tags || []), tagInput.trim()];
+      onTagsChange([...new Set(newTags)]);
+      setTagInput("");
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    onTagsChange((activeNote.tags || []).filter((t) => t !== tagToRemove));
+  };
+
   if (!activeNote) {
     return null;
   }
 
   const isNewNote = activeNote.id === "new";
   const isEmpty = !activeNote.title.trim() && !activeNote.content.trim();
+
+  const noteBackground = activeNote.color
+    ? `linear-gradient(135deg, ${activeNote.color}DD 0%, ${activeNote.color}99 100%)`
+    : "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)";
 
   return (
     <motion.div
@@ -144,15 +177,13 @@ const NoteViewComponent = ({
       <Paper
         elevation={0}
         sx={{
-          background: {
-            xs: "transparent",
-            sm: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
-          },
+          background: noteBackground,
           backdropFilter: { xs: "none", sm: "blur(20px)" },
           border: { xs: "none", sm: "1px solid rgba(255, 255, 255, 0.1)" },
           borderRadius: { xs: 0, sm: 4 },
           overflow: "hidden",
           minHeight: { xs: "calc(100vh - 80px)", sm: "auto" },
+          transition: "background 0.5s ease",
         }}
       >
         {/* Header with stats */}
@@ -259,6 +290,54 @@ const NoteViewComponent = ({
           sx={{ p: { xs: 2, sm: 4 } }}
         >
           <Stack spacing={3}>
+            {/* Tag Management */}
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+              <LabelIcon sx={{ color: "rgba(255,255,255,0.5)", fontSize: 20 }} />
+              {activeNote.tags?.map((tag) => (
+                <Chip
+                  key={tag}
+                  label={tag}
+                  onDelete={() => handleRemoveTag(tag)}
+                  size="small"
+                  sx={{ bgcolor: "rgba(187, 134, 252, 0.2)" }}
+                />
+              ))}
+              <TextField
+                size="small"
+                placeholder="Add tag..."
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleAddTag}
+                variant="standard"
+                InputProps={{ disableUnderline: true }}
+                sx={{
+                  width: 100,
+                  "& .MuiInputBase-input": { fontSize: "0.85rem", py: 0.5 },
+                }}
+              />
+            </Stack>
+
+            {/* Color Palette */}
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <PaletteIcon sx={{ color: "rgba(255,255,255,0.5)", fontSize: 20 }} />
+              {PRESET_COLORS.map((color) => (
+                <Box
+                  key={color}
+                  onClick={() => onColorChange(color)}
+                  sx={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: "50%",
+                    bgcolor: color,
+                    cursor: "pointer",
+                    border: activeNote.color === color ? "2px solid #BB86FC" : "1px solid rgba(255,255,255,0.2)",
+                    transition: "all 0.2s",
+                    "&:hover": { transform: "scale(1.2)" },
+                  }}
+                />
+              ))}
+            </Stack>
+
             {/* Image Preview Section */}
             {activeNote.images && activeNote.images.length > 0 && (
               <Stack direction="row" spacing={2} sx={{ overflowX: "auto", pb: 1 }}>

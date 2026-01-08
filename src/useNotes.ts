@@ -7,6 +7,8 @@ export interface Note {
   lastEdited: string;
   images?: string[]; // Array of base64 strings
   pinned?: boolean;
+  color?: string; // Hex color for the note background
+  tags?: string[]; // Array of categories/tags
 }
 
 const getStoredNotes = (): Note[] => {
@@ -37,7 +39,7 @@ export const useNotes = () => {
   }, []);
 
   const addNote = useCallback(
-    (note: Pick<Note, "title" | "content" | "images" | "pinned">) => {
+    (note: Pick<Note, "title" | "content" | "images" | "pinned" | "color" | "tags">) => {
       const newNote: Note = {
         id: new Date().toISOString(),
         lastEdited: new Date().toISOString(),
@@ -73,5 +75,14 @@ export const useNotes = () => {
     [notes],
   );
 
-  return { notes, addNote, updateNote, deleteNote };
+  const deleteNotes = useCallback(
+    (ids: string[]) => {
+      const updatedNotes = notes.filter((note) => !ids.includes(note.id));
+      setNotes(updatedNotes);
+      storeNotes(updatedNotes);
+    },
+    [notes],
+  );
+
+  return { notes, addNote, updateNote, deleteNote, deleteNotes };
 };

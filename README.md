@@ -7,7 +7,7 @@
 **Noteeeee** is a state-of-the-art note-taking application engineered for speed, aesthetics, and fluidity. Built with the latest **Material Design 3 (Material You)** principles, it offers a visually stunning and highly responsive experience across Android and Web platforms.
 
 <p align="center">
-  <img src="https://via.placeholder.com/800x400.png?text=App+Screenshot+Coming+Soon" alt="App Preview" width="100%" style="border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
+  <img src="assets/preview.png" alt="App Preview" width="100%" style="border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
 </p>
 
 ## ✨ Features

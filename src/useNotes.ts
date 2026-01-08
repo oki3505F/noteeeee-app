@@ -5,6 +5,7 @@ export interface Note {
   title: string;
   content: string;
   lastEdited: string;
+  images?: string[]; // Array of base64 strings
 }
 
 const getStoredNotes = (): Note[] => {
@@ -35,7 +36,7 @@ export const useNotes = () => {
   }, []);
 
   const addNote = useCallback(
-    (note: Pick<Note, "title" | "content">) => {
+    (note: Pick<Note, "title" | "content" | "images">) => {
       const newNote: Note = {
         id: new Date().toISOString(),
         lastEdited: new Date().toISOString(),

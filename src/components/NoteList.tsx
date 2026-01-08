@@ -187,6 +187,7 @@ const GridView = ({
                   "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
                 backdropFilter: "blur(10px)",
                 border: "1px solid rgba(255, 255, 255, 0.1)",
+                overflow: "hidden", // Ensure cover image doesn't overflow
                 "&:hover": {
                   boxShadow: "0 8px 32px rgba(187, 134, 252, 0.2)",
                   borderColor: "rgba(187, 134, 252, 0.3)",
@@ -194,6 +195,17 @@ const GridView = ({
                 transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
+              {note.images && note.images.length > 0 && (
+                <Box
+                  sx={{
+                    height: 140,
+                    width: "100%",
+                    backgroundImage: `url(${note.images[0]})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                />
+              )}
               <CardContent sx={{ flexGrow: 1, p: { xs: 2, sm: 3 } }}>
                 <Typography
                   variant="h6"
@@ -312,7 +324,21 @@ const ListView = ({
             }}
           >
             <Box sx={{ mr: 2 }}>
-              <ArticleIcon sx={{ color: "text.secondary", fontSize: 20 }} />
+              {note.images && note.images.length > 0 ? (
+                <Box
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: 2,
+                    backgroundImage: `url(${note.images[0]})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                  }}
+                />
+              ) : (
+                <ArticleIcon sx={{ color: "text.secondary", fontSize: 28 }} />
+              )}
             </Box>
 
             <ListItemText

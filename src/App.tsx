@@ -5,7 +5,6 @@ import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
-import Avatar from "@mui/material/Avatar";
 import Fab from "@mui/material/Fab";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -97,8 +96,8 @@ function App() {
       updateNote(activeNote);
       showNotification("Note updated successfully");
     } else {
-      const { title, content } = activeNote;
-      addNote({ title, content });
+      const { title, content, images } = activeNote;
+      addNote({ title, content, images });
       showNotification("Note created successfully");
     }
     setActiveNote(null);
@@ -127,6 +126,16 @@ function App() {
     }
     return `Notes (${notes.length})`;
   };
+
+  const handleImageAdd = useCallback((base64: string) => {
+    setActiveNote((prevNote) => {
+      if (!prevNote) return null;
+      return {
+        ...prevNote,
+        images: [...(prevNote.images || []), base64],
+      };
+    });
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -208,19 +217,6 @@ function App() {
                         <ViewModuleIcon />
                       )}
                     </IconButton>
-                    <Avatar
-                      sx={{
-                        bgcolor: "#D0BCFF",
-                        color: "#381E72",
-                        width: 36,
-                        height: 36,
-                        fontSize: "0.9rem",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                      }}
-                    >
-                      A
-                    </Avatar>
                   </>
                 )}
                 {activeNote && (
@@ -259,7 +255,6 @@ function App() {
           transition: "height 0.3s ease",
         }}
       />
-
       <Container
         maxWidth="lg"
         sx={{
@@ -282,6 +277,7 @@ function App() {
               <NoteView
                 activeNote={activeNote}
                 onChange={handleActiveNoteChange}
+                onImageAdd={handleImageAdd}
                 onSave={handleSaveNote}
                 onDelete={handleDeleteNote}
               />

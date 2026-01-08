@@ -13,12 +13,14 @@ import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ArticleIcon from "@mui/icons-material/Article";
+import ImageIcon from "@mui/icons-material/Image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Note } from "../useNotes";
 
 interface NoteViewProps {
   activeNote: Note;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onImageAdd: (base64: string) => void;
   onSave: () => void;
   onDelete: () => void;
 }
@@ -67,6 +69,7 @@ const NoteViewComponent = ({
   onChange,
   onSave,
   onDelete,
+  onImageAdd,
 }: NoteViewProps) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [autoSaving, setAutoSaving] = useState(false);
@@ -84,18 +87,13 @@ const NoteViewComponent = ({
         titleRef.current?.focus();
       } else {
         contentRef.current?.focus();
-        // Move cursor to end
-        const content = contentRef.current;
-        if (content) {
-          content.setSelectionRange(content.value.length, content.value.length);
-        }
       }
     }, 100);
   }, [activeNote.id]);
 
   useEffect(() => {
     setHasUnsavedChanges(true);
-  }, [activeNote.title, activeNote.content]);
+  }, [activeNote.title, activeNote.content, activeNote.images]);
 
   const handleSave = async () => {
     setAutoSaving(true);
@@ -113,6 +111,19 @@ const NoteViewComponent = ({
     if ((e.ctrlKey || e.metaKey) && e.key === "s") {
       e.preventDefault();
       handleSave();
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          onImageAdd(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -259,6 +270,24 @@ const NoteViewComponent = ({
           sx={{ p: { xs: 2, sm: 4 } }}
         >
           <Stack spacing={3}>
+            {/* Image Preview Section */}
+            {activeNote.images && activeNote.images.length > 0 && (
+              <Stack direction="row" spacing={2} sx={{ overflowX: "auto", pb: 1 }}>
+                {activeNote.images.map((img, index) => (
+                  <Box
+                    key={index}
+                    component="img"
+                    src={img}
+                    sx={{
+                      height: 200,
+                      borderRadius: 2,
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                    }}
+                  />
+                ))}
+              </Stack>
+            )}
+
             <TextField
               inputRef={titleRef}
               label="Title"
@@ -341,6 +370,33 @@ const NoteViewComponent = ({
                 }}
               >
                 {autoSaving ? "Saving..." : "Save Note"}
+              </Button>
+
+              <Button
+                component="label"
+                variant="outlined"
+                startIcon={<ImageIcon />}
+                size="large"
+                sx={{
+                  minHeight: 48,
+                  borderRadius: 3,
+                  borderWidth: 2,
+                  borderColor: "rgba(255, 255, 255, 0.2)",
+                  color: "white",
+                  "&:hover": {
+                    borderWidth: 2,
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    borderColor: "white",
+                  }
+                }}
+              >
+                Add Image
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
               </Button>
 
               {!isNewNote && (

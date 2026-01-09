@@ -1,4 +1,4 @@
-# Noteeeee - Premium Note Taking Experience!
+# Noteeeee - Premium Note Taking Experience!!
 
 ![License](https://img.shields.io/github/license/oki3505F/noteeeee-app?style=for-the-badge&color=D0BCFF)
 ![Version](https://img.shields.io/badge/version-2.1.0-D0BCFF?style=for-the-badge)
